@@ -1,0 +1,77 @@
+'use server'
+
+import { createClient } from '@/lib/supabase/server'
+import { revalidatePath } from 'next/cache'
+import { invoiceSchema, InvoiceFormValues } from '@/lib/validations/invoice'
+
+export async function createInvoiceAction(data: InvoiceFormValues) {
+  const supabase = await createClient()
+
+  const { data: userData } = await supabase.auth.getUser()
+  if (!userData.user) {
+    throw new Error('Not authenticated')
+  }
+
+  // Validate the data
+  const validatedFields = invoiceSchema.safeParse(data)
+  if (!validatedFields.success) {
+    return { error: 'Invalid fields', details: validatedFields.error.flatten() }
+  }
+
+  // Get business_id
+  const { data: userRole } = await supabase
+    .from('user_roles')
+    .select('business_id')
+    .eq('user_id', userData.user.id)
+    .single()
+
+  if (!userRole) {
+    return { error: 'No business found for user' }
+  }
+
+  const { items, tax, discount, ...invoiceData } = validatedFields.data
+
+  // Calculate subtotal
+  const subtotal = items.reduce((acc, item) => acc + (item.quantity * item.unit_price), 0)
+  const total = subtotal + tax - discount
+
+  // Insert Invoice
+  const { data: newInvoice, error: invoiceError } = await supabase
+    .from('invoices')
+    .insert({
+      ...invoiceData,
+      business_id: userRole.business_id,
+      subtotal,
+      tax,
+      discount,
+      total,
+    })
+    .select()
+    .single()
+
+  if (invoiceError) {
+    console.error('Invoice creation error:', invoiceError)
+    return { error: invoiceError.message }
+  }
+
+  // Insert Items
+  const itemsToInsert = items.map(item => ({
+    ...item,
+    invoice_id: newInvoice.id,
+    total: item.quantity * item.unit_price
+  }))
+
+  const { error: itemsError } = await supabase
+    .from('invoice_items')
+    .insert(itemsToInsert)
+
+  if (itemsError) {
+    // If item insertion fails, we should ideally rollback (not natively supported in Supabase REST yet)
+    // For now we just return error
+    console.error('Invoice items creation error:', itemsError)
+    return { error: itemsError.message }
+  }
+
+  revalidatePath('/invoices')
+  return { success: true, invoiceId: newInvoice.id }
+}

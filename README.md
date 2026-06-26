@@ -1,36 +1,61 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# InvoiceOS AI
 
-## Getting Started
+**The AI Business Operating System for Small Businesses**
 
-First, run the development server:
+InvoiceOS AI is a production-ready SaaS web application that enables small businesses to create invoices, manage customers, and automate bookkeeping.
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+## Tech Stack
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+- **Frontend:** Next.js 14 (App Router), React, TypeScript, Tailwind CSS, shadcn/ui, Framer Motion, React Hook Form, Zod.
+- **Backend:** Supabase (PostgreSQL, Authentication, RLS).
+- **Hosting:** Designed for Vercel and GitHub.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Local Development Setup
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+1. **Clone the repository and install dependencies:**
+   ```bash
+   npm install
+   ```
 
-## Learn More
+2. **Configure Environment Variables:**
+   Copy the `.env.example` file to `.env.local`:
+   ```bash
+   cp .env.example .env.local
+   ```
+   Fill in your Supabase project URL and anon key.
 
-To learn more about Next.js, take a look at the following resources:
+3. **Database Setup:**
+   Run the SQL migrations located in `supabase/migrations/` in your Supabase project's SQL editor to set up the database schema and RLS policies.
+   - `20240101000000_init.sql`
+   - `20240101000001_core_modules.sql`
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+4. **Start the development server:**
+   ```bash
+   npm run dev
+   ```
+   Navigate to `http://localhost:3000`.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## Deployment Guide (Vercel)
 
-## Deploy on Vercel
+This project is optimized for deployment on Vercel.
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+1. **Push to GitHub:**
+   Commit your code and push it to a GitHub repository.
+   ```bash
+   git add .
+   git commit -m "Initial commit"
+   git branch -M main
+   git remote add origin https://github.com/yourusername/invoice-os-ai.git
+   git push -u origin main
+   ```
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+2. **Deploy to Vercel:**
+   - Log in to your Vercel dashboard.
+   - Click **Add New** -> **Project**.
+   - Import your GitHub repository.
+   - In the **Environment Variables** section, add the following keys from your Supabase project:
+     - `NEXT_PUBLIC_SUPABASE_URL`
+     - `NEXT_PUBLIC_SUPABASE_ANON_KEY`
+   - Click **Deploy**.
+
+Vercel will automatically build and deploy the Next.js application. Future commits to the `main` branch will trigger automatic deployments.
