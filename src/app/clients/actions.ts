@@ -23,6 +23,13 @@ export async function createClientAction(formData: FormData) {
     throw new Error('No business found for user')
   }
 
+  // Enforce usage limits
+  const { checkUsageLimit } = await import('@/lib/usage')
+  const usage = await checkUsageLimit(userRole.business_id, 'clients')
+  if (!usage.allowed) {
+    return { error: `Plan limit reached. You can only have ${usage.limit} clients on your current plan.` }
+  }
+
   const newClient = {
     business_id: userRole.business_id,
     name: formData.get('name') as string,

@@ -29,6 +29,13 @@ export async function createInvoiceAction(data: InvoiceFormValues) {
     return { error: 'No business found for user' }
   }
 
+  // Enforce usage limits
+  const { checkUsageLimit } = await import('@/lib/usage')
+  const usage = await checkUsageLimit(userRole.business_id, 'invoices')
+  if (!usage.allowed) {
+    return { error: `Plan limit reached. You can only create ${usage.limit} invoices per month on your current plan.` }
+  }
+
   const { items, tax, discount, ...invoiceData } = validatedFields.data
 
   // Calculate subtotal
@@ -45,6 +52,7 @@ export async function createInvoiceAction(data: InvoiceFormValues) {
       tax,
       discount,
       total,
+      ...(invoiceData.is_recurring ? { last_recurring_date: invoiceData.issue_date } : {})
     })
     .select()
     .single()

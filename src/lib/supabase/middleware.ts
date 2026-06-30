@@ -35,7 +35,13 @@ export async function updateSession(request: NextRequest) {
   const isAuthRoute = request.nextUrl.pathname.startsWith('/login') || request.nextUrl.pathname.startsWith('/register')
   
   // Define public routes
-  const isPublicRoute = request.nextUrl.pathname === '/' || isAuthRoute
+  const isPublicRoute = 
+    isAuthRoute || 
+    request.nextUrl.pathname === '/' ||
+    request.nextUrl.pathname === '/pricing' ||
+    request.nextUrl.pathname.startsWith('/portal') ||
+    request.nextUrl.pathname.startsWith('/api/stripe/webhook') ||
+    request.nextUrl.pathname.startsWith('/api/cron')
 
   if (!user && !isPublicRoute) {
     // no user, potentially respond by redirecting the user to the login page

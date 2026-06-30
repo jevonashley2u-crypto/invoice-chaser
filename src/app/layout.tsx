@@ -13,6 +13,7 @@ const geistMono = Geist_Mono({
 });
 
 import { ThemeProvider } from "@/components/theme-provider";
+import SupabaseProvider from "@/components/providers/supabase-provider";
 
 export const metadata: Metadata = {
   title: "InvoiceOS AI | Business Operating System",
@@ -37,7 +38,9 @@ export default function RootLayout({
           enableSystem
           disableTransitionOnChange
         >
-          {children}
+          <SupabaseProvider>
+            {children}
+          </SupabaseProvider>
         </ThemeProvider>
       </body>
     </html>

@@ -1,11 +1,12 @@
 import { ThemeToggle } from "@/components/theme-toggle";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Button } from "@/components/ui/button";
+import { Button, buttonVariants } from "@/components/ui/button";
 import { Menu, LogOut, User } from "lucide-react";
 import {
   Sheet,
   SheetContent,
   SheetTrigger,
+  SheetTitle,
 } from "@/components/ui/sheet";
 import {
   DropdownMenu,
@@ -21,17 +22,14 @@ export function AppHeader() {
   return (
     <header className="flex h-14 items-center gap-4 border-b bg-muted/40 px-4 lg:h-[60px] lg:px-6">
       <Sheet>
-        <SheetTrigger asChild>
-          <Button
-            variant="outline"
-            size="icon"
-            className="shrink-0 md:hidden"
-          >
-            <Menu className="h-5 w-5" />
-            <span className="sr-only">Toggle navigation menu</span>
-          </Button>
+        <SheetTrigger
+          className={buttonVariants({ variant: "outline", size: "icon", className: "shrink-0 md:hidden" })}
+        >
+          <Menu className="h-5 w-5" />
+          <span className="sr-only">Toggle navigation menu</span>
         </SheetTrigger>
         <SheetContent side="left" className="flex flex-col p-0">
+          <SheetTitle className="sr-only">Navigation Menu</SheetTitle>
           <AppSidebar />
         </SheetContent>
       </Sheet>
@@ -40,14 +38,14 @@ export function AppHeader() {
       </div>
       <ThemeToggle />
       <DropdownMenu>
-        <DropdownMenuTrigger asChild>
-          <Button variant="ghost" size="icon" className="rounded-full">
-            <Avatar className="h-8 w-8">
-              <AvatarImage src="" />
-              <AvatarFallback>U</AvatarFallback>
-            </Avatar>
-            <span className="sr-only">Toggle user menu</span>
-          </Button>
+        <DropdownMenuTrigger
+          className={buttonVariants({ variant: "ghost", size: "icon", className: "rounded-full" })}
+        >
+          <Avatar className="h-8 w-8">
+            <AvatarImage src="" />
+            <AvatarFallback>U</AvatarFallback>
+          </Avatar>
+          <span className="sr-only">Toggle user menu</span>
         </DropdownMenuTrigger>
         <DropdownMenuContent align="end">
           <DropdownMenuLabel>My Account</DropdownMenuLabel>
@@ -57,11 +55,11 @@ export function AppHeader() {
             Profile
           </DropdownMenuItem>
           <DropdownMenuSeparator />
-          <DropdownMenuItem asChild>
+          <DropdownMenuItem>
             <form action="/auth/signout" method="post" className="w-full">
               <button type="submit" className="flex w-full items-center">
                 <LogOut className="mr-2 h-4 w-4" />
-                Logout
+                Sign out
               </button>
             </form>
           </DropdownMenuItem>

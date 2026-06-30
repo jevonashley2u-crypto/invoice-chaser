@@ -2,7 +2,7 @@ import { login, signup } from './actions'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
-import { Button } from '@/components/ui/button'
+import { Button, buttonVariants } from '@/components/ui/button'
 import { Bot } from 'lucide-react'
 
 export default async function LoginPage({
@@ -10,7 +10,9 @@ export default async function LoginPage({
 }: {
   searchParams: Promise<{ [key: string]: string | string[] | undefined }>
 }) {
-  const error = (await searchParams).error as string | undefined;
+  const params = await searchParams;
+  const error = params.error as string | undefined;
+  const message = params.message as string | undefined;
   
   return (
     <div className="flex min-h-screen items-center justify-center bg-muted/40 p-4">
@@ -26,7 +28,7 @@ export default async function LoginPage({
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <form className="grid gap-4">
+          <form action={login} className="grid gap-4">
             <div className="grid gap-2">
               <Label htmlFor="email">Email</Label>
               <Input
@@ -44,13 +46,16 @@ export default async function LoginPage({
             {error && (
               <div className="text-sm text-red-500 font-medium">{error}</div>
             )}
+            {message && (
+              <div className="text-sm text-green-500 font-medium">{message}</div>
+            )}
             <div className="flex flex-col gap-2 mt-2">
-              <Button formAction={login} className="w-full">
+              <button formAction={login} className={buttonVariants({ className: "w-full" })} type="submit">
                 Sign In
-              </Button>
-              <Button formAction={signup} variant="outline" className="w-full">
+              </button>
+              <button formAction={signup} className={buttonVariants({ variant: "outline", className: "w-full" })} type="submit">
                 Sign Up
-              </Button>
+              </button>
             </div>
           </form>
         </CardContent>

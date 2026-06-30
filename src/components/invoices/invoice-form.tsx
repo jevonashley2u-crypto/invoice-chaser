@@ -10,6 +10,7 @@ import Link from 'next/link'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
+import { Switch } from '@/components/ui/switch'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import {
   Form,
@@ -41,7 +42,7 @@ export function InvoiceForm({ clients }: { clients: Client[] }) {
   const [error, setError] = useState<string | null>(null)
 
   const form = useForm<InvoiceFormValues>({
-    resolver: zodResolver(invoiceSchema),
+    resolver: zodResolver(invoiceSchema) as any,
     defaultValues: {
       client_id: '',
       invoice_number: `INV-${Math.floor(1000 + Math.random() * 9000)}`,
@@ -166,6 +167,60 @@ export function InvoiceForm({ clients }: { clients: Client[] }) {
           </CardContent>
         </Card>
 
+        <Card>
+          <CardHeader>
+            <CardTitle>Recurrence Settings</CardTitle>
+            <CardDescription>Automate this invoice to send on a regular schedule.</CardDescription>
+          </CardHeader>
+          <CardContent className="grid gap-6">
+            <FormField
+              control={form.control}
+              name="is_recurring"
+              render={({ field }) => (
+                <FormItem className="flex flex-row items-center justify-between rounded-lg border p-4">
+                  <div className="space-y-0.5">
+                    <FormLabel className="text-base">Recurring Invoice</FormLabel>
+                    <CardDescription>
+                      Automatically generate and send this invoice.
+                    </CardDescription>
+                  </div>
+                  <FormControl>
+                    <Switch
+                      checked={field.value}
+                      onCheckedChange={field.onChange}
+                    />
+                  </FormControl>
+                </FormItem>
+              )}
+            />
+
+            {form.watch('is_recurring') && (
+              <FormField
+                control={form.control}
+                name="recurring_interval"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Interval</FormLabel>
+                    <Select onValueChange={field.onChange} defaultValue={field.value}>
+                      <FormControl>
+                        <SelectTrigger>
+                          <SelectValue placeholder="Select interval" />
+                        </SelectTrigger>
+                      </FormControl>
+                      <SelectContent>
+                        <SelectItem value="weekly">Weekly</SelectItem>
+                        <SelectItem value="monthly">Monthly</SelectItem>
+                        <SelectItem value="quarterly">Quarterly</SelectItem>
+                        <SelectItem value="yearly">Yearly</SelectItem>
+                      </SelectContent>
+                    </Select>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            )}
+          </CardContent>
+        </Card>
         <Card>
           <CardHeader>
             <CardTitle>Line Items</CardTitle>

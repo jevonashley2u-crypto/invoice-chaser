@@ -15,6 +15,8 @@ export const invoiceSchema = z.object({
   items: z.array(invoiceItemSchema).min(1, 'At least one item is required'),
   tax: z.coerce.number().min(0).default(0),
   discount: z.coerce.number().min(0).default(0),
+  is_recurring: z.boolean().default(false),
+  recurring_interval: z.enum(['none', 'weekly', 'monthly', 'quarterly', 'yearly']).default('none'),
 })
 
 export type InvoiceFormValues = z.infer<typeof invoiceSchema>

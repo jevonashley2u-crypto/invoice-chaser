@@ -59,7 +59,7 @@ export default async function ClientsPage() {
                       <TableCell>{client.email || 'N/A'}</TableCell>
                       <TableCell>{client.phone || 'N/A'}</TableCell>
                       <TableCell className="text-right">
-                        <form action={deleteClientAction.bind(null, client.id)}>
+                        <form action={async () => { "use server"; await deleteClientAction(client.id); }}>
                           <Button variant="destructive" size="sm" type="submit">
                             Delete
                           </Button>

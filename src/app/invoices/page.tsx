@@ -1,6 +1,7 @@
 import { AppLayout } from '@/components/layout/app-layout'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { createClient } from '@/lib/supabase/server'
+import { requireBusinessSetup } from '@/lib/onboarding'
 import {
   Table,
   TableBody,
@@ -15,6 +16,7 @@ import Link from 'next/link'
 import { Plus } from 'lucide-react'
 
 export default async function InvoicesPage() {
+  await requireBusinessSetup()
   const supabase = await createClient()
 
   // Fetch invoices with client names

@@ -1,7 +1,7 @@
 'use client'
 
 import { useState } from 'react'
-import { Button } from '@/components/ui/button'
+import { Button, buttonVariants } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import {
@@ -31,11 +31,11 @@ export function ClientForm() {
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
-      <DialogTrigger asChild>
-        <Button>
-          <Plus className="mr-2 h-4 w-4" />
-          Add Client
-        </Button>
+      <DialogTrigger
+        className={buttonVariants()}
+      >
+        <Plus className="mr-2 h-4 w-4" />
+        Add Client
       </DialogTrigger>
       <DialogContent className="sm:max-w-[425px]">
         <form action={onSubmit}>

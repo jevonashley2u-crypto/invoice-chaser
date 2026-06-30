@@ -20,26 +20,29 @@ export async function login(formData: FormData) {
     redirect('/login?error=Could not authenticate user')
   }
 
-  revalidatePath('/', 'layout')
-  redirect('/')
+  revalidatePath('/dashboard', 'layout')
+  redirect('/dashboard')
 }
 
 export async function signup(formData: FormData) {
   const supabase = await createClient()
 
-  // type-casting here for convenience
-  // in practice, you should validate your inputs
   const data = {
     email: formData.get('email') as string,
     password: formData.get('password') as string,
   }
 
-  const { error } = await supabase.auth.signUp(data)
+  const { data: authData, error } = await supabase.auth.signUp(data)
 
   if (error) {
-    redirect('/login?error=Could not create user')
+    redirect(`/login?error=${error.message}`)
+  }
+
+  if (!authData.session) {
+    // If there is no session, it means email confirmation is required
+    redirect('/login?message=Sign up successful! Please check your email to confirm your account.')
   }
 
   revalidatePath('/', 'layout')
-  redirect('/')
+  redirect('/onboarding/plan')
 }
